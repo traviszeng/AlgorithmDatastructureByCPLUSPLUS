@@ -62,6 +62,19 @@ int main() {
 	replace(str.begin(), str.end(), '.', '_');
 
 
+	const double minWage = 9.6;
+	//double *ptr = &minWage;
+	const double *ptr = 0;
+	;
+
+	ptr = &minWage;
+
+	double dval = 3.14;
+	const double *pt  = &dval;//pt 是一个指向非const对象的const指针。不能赋给pt其他的地址值，但是可以修改pt指向的值
+
+	*pt = 9.99;//
+
+
 
 
 	system("pause");
