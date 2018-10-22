@@ -3,6 +3,7 @@
 #define LINKEDLIST_H
 #include <iostream>
 #include <cassert>
+#include "LinearList.h"
 using namespace std;
 #ifndef INSMOD_INF_INR
 #define INSMOD_INF_INR
@@ -20,7 +21,7 @@ template <typename T>struct LinkNode {
 	}
 };
 
-template <typename T>class List {
+template <typename T>class List:public LinearList<T>{
 public:
 	List() {
 		first = new LinkNode<T>;

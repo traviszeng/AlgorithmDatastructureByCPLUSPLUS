@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <cassert>
+#include "LinearList.h"
 using namespace std;
 
 template <typename T>struct DblNode {
@@ -21,7 +22,7 @@ template <typename T>struct DblNode {
 	}
 };
 
-template <typename T>class DblList {
+template <typename T>class DblList:public LinearList<T>{
 public:
 	DblList(T uniqueVal) {
 		first = new DblNode<T>(uniqueVal);

@@ -3,6 +3,7 @@
 #define CIRCLIST_H
 #include <iostream>
 #include <cassert>
+#include "LinearList.h"
 #ifndef INSMOD_INF_INR
 #define INSMOD_INF_INR
 enum InsMod { INF, INR };//向前还是向后生成
@@ -22,7 +23,7 @@ public:
 	}
 };
 
-template <typename T>class CircList {
+template <typename T>class CircList:public LinearList<T> {
 public:
 	CircList() {//建立有附加头结点的空环链表
 		last = first = new CircLinkNode<T>;
