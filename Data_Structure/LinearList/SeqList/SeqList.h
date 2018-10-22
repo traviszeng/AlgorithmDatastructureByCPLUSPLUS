@@ -8,6 +8,7 @@ typedef struct{
 }SeqList;
 */
 #ifndef SEQLIST_H
+#define SEQLIST_H
 #include<cassert>
 #include<iostream>
 using namespace std;
