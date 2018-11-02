@@ -15,6 +15,9 @@ private:
 	LinkNode<T> *top;
 public:
 	LinkedStack() :top(NULL) {}
+	LinkedStack(const T num) {
+		
+	}
 	~LinkedStack() {
 		makeEmpty();
 	}
