@@ -6,7 +6,7 @@
 #include "Queue.h"
 using namespace std;
 
-template <typename T>class SeqQueue :public Queue{
+template <typename T>class SeqQueue :public Queue<T>{
 public:
 	SeqQueue(int sz = 50);
 	~SeqQueue() {
@@ -14,14 +14,14 @@ public:
 	}
 	bool EnQueue(const T &x);	//进队
 	bool DeQueue(T &x);			//出队
-	bool getFront(T &x)const;
+	bool getFront(T &x);
 	void makeEmpty() {
 		front = rear = 0;
 	}
-	bool IsEmpty()const {
+	bool isEmpty()const {
 		return front == rear;
 	}
-	bool IsFull()const {
+	bool isFull()const {
 		return (rear + 1) % maxSize == front;//环队算法
 	}
 	int getSize()const {
@@ -51,7 +51,7 @@ template <typename T>SeqQueue<T>::SeqQueue(int sz) {
 
 // 该函数可改进
 template <typename T>bool SeqQueue<T>::EnQueue(const T &x) {
-	if (IsFull())	return false;
+	if (isFull())	return false;
 	elements[rear] = x;
 	rear = (rear + 1) % maxSize;
 	return true;
@@ -60,14 +60,14 @@ template <typename T>bool SeqQueue<T>::EnQueue(const T &x) {
 
 // 该函数可改进
 template <typename T>bool SeqQueue<T>::DeQueue(T &x) {
-	if (IsEmpty())	return false;
+	if (isEmpty())	return false;
 	x = elements[front];
 	front = (front + 1) % maxSize;
 	return true;
 }
 
-template <typename T>bool SeqQueue<T>::getFront(T &x)const {
-	if (IsEmpty())	return false;
+template <typename T>bool SeqQueue<T>::getFront(T &x) {
+	if (isEmpty())	return false;
 	x = elements[front];
 	return true;
 }
