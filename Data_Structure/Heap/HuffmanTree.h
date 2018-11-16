@@ -1,7 +1,7 @@
 #pragma once
 #ifndef HAFFMANTREE_H
 #define HAFFMANTREE_H
-#include "MinHeap.h"
+#include "MinHeap2.h"
 #include<iostream>
 #include<string>
 using namespace std;
