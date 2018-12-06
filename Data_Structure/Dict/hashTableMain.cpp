@@ -3,7 +3,7 @@
 #include "person.h"
 using namespace std;
 int main() {
-	ifstream fin("persons.txt");
+	ifstream fin("personData.txt");
 	assert(fin);
 	HashTable<person, long> ht(37, 40);
 	cout << "Load data from the file...\n";
