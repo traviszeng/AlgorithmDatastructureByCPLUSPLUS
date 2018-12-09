@@ -1,16 +1,4 @@
-﻿/*******************************************************************
-Copyright(c) 2016, Harry He
-All rights reserved.
-
-Distributed under the BSD license.
-(See accompanying file LICENSE.txt at
-https://github.com/zhedahht/CodingInterviewChinese2/blob/master/LICENSE.txt)
-*******************************************************************/
-
-//==================================================================
-// 《剑指Offer——名企面试官精讲典型编程题》代码
-// 作者：何海涛
-//==================================================================
+﻿
 
 // 面试题2：实现Singleton模式
 // 题目：设计一个类，我们只能生成该类的一个实例。
@@ -102,6 +90,8 @@ namespace _02_Singleton
         }
 
         private static Singleton4 instance = new Singleton4();
+        //静态构造方法，在第一次使用Singleton4的时候就调用，先初始化静态变量，
+        //再调用静态构造方法，然后如果有构造方法 在调用初始化非静态变量和执行构造方法
         public static Singleton4 Instance
         {
             get
