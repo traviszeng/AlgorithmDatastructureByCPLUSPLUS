@@ -7,6 +7,7 @@ using System;
 
 namespace _02_Singleton
 {
+    /**声明为sealed表示他们不能作为其他类型的基类*/
     public sealed class Singleton1
     {
         private Singleton1()
