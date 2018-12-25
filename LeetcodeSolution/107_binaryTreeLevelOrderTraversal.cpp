@@ -54,6 +54,7 @@ vector<vector<int>> levelOrderBottom(TreeNode* root) {
 		result.push_back(traversal(nodeQueue));
 
 	}
+	reverse(result.begin(), result.end());
 	return result;
 
 }
