@@ -53,6 +53,9 @@ vector<TreeNode*> generateTrees(int n, int st = 1)
 
 
 int main() {
-	generateTrees(3);
+	vector<TreeNode*> ans = generateTrees(5);
+	cout << ans.size();
+	system("pause");
+	//1 1  2 5 14 42 
 
 }
