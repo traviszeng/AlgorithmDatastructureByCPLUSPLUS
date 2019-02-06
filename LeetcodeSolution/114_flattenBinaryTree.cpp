@@ -13,10 +13,25 @@ struct TreeNode {
 };
 
 
+TreeNode *pt = NULL;
 void flatten(TreeNode* root) {
+	if (!root)
+		return;
+	else {
+		TreeNode *tp1 = root->left, *tp2 = root->right;
+		if (pt == NULL) {
+			pt = root;
+			pt->left = NULL;
+			pt->right = NULL;
+			root = pt;
+		}
+		else {
+			pt->right = root;
+			pt = pt->right;
+			pt->left = NULL;
+			pt->right = NULL;
+		}
 
-}
-
-void append(TreeNode* &root) {
-	
-}
+		flatten(tp1);
+		flatten(tp2);
+	}
