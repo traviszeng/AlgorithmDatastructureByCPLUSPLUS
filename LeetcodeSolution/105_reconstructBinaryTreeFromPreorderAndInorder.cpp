@@ -27,7 +27,7 @@ TreeNode * buildTreeCore(vector<int> &preorder, int preorderStart, int preorderE
 			//ÓÒ±ßÎªÓÒ×ÓÊ÷
 		}
 	}
-	int leftSize = rootLoc - preorderStart;
+	int leftSize = rootLoc - inorderStart;
 	int rightSize = inorderEnd - inorderStart  - leftSize;
 	if(leftSize>0)
 		root->left = buildTreeCore(preorder, preorderStart + 1, preorderStart + leftSize, inorder, inorderStart, inorderStart + leftSize-1);
