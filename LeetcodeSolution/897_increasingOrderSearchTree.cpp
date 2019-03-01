@@ -28,7 +28,7 @@ void traverse(TreeNode *root,vector<int> &traversal) {
 TreeNode* increasingBST(TreeNode* root) {
 	vector<int> traversal;
 	traverse(root, traversal);
-	sort(traversal.begin(), traversal.end());
+	//sort(traversal.begin(), traversal.end());
 	TreeNode *newRoot = new TreeNode(traversal[0]);
 	TreeNode *currentNode = newRoot;
 	for (int i = 1; i < traversal.size(); i++) {
