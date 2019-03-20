@@ -5,6 +5,7 @@
 
 
 ListNode* ReverseList(ListNode* pHead) {
+	//使用三个指针分别指向
 	if (pHead == nullptr)
 		return nullptr;
 	if (pHead->m_pNext == nullptr)
