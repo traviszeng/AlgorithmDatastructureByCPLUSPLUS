@@ -1,4 +1,5 @@
 #include <cstdio>
+#include<iostream>
 #include "../../../ReviewOfCPLUSPLUS/Coding_Interview/List.h"
 // 面试题23：链表中环的入口结点
 // 题目：一个链表中包含环，如何找出环的入口结点？例如，在图3.8的链表中，
@@ -47,7 +48,7 @@ ListNode* EntryNodeOfLoop(ListNode* pHead)
 		count++;
 	}
 
-	delete p;
+	//delete p;
 	ListNode *pFirst = pHead;
 	while (count--) {
 		pFirst = pFirst->m_pNext;
@@ -221,6 +222,6 @@ int main(int argc, char* argv[])
 	Test5();
 	Test6();
 	Test7();
-
+	system("pause");
 	return 0;
 }
