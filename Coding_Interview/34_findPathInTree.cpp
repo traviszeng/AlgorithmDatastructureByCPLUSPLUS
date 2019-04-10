@@ -1,6 +1,5 @@
 #include<iostream>
 #include "BinaryTree.h"
-#include<stack>
 #include<vector>
 using namespace std;
 void printPath(vector<int> vec) {
@@ -11,6 +10,7 @@ void printPath(vector<int> vec) {
 }
 
 void findPathHelper(BinaryTreeNode *root,vector<int>& vec, int expectedSum,int currentSum) {
+	//先序遍历
 	currentSum += root->m_nValue;
 	vec.push_back(root->m_nValue);
 
@@ -23,7 +23,7 @@ void findPathHelper(BinaryTreeNode *root,vector<int>& vec, int expectedSum,int c
 	if (root->m_pRight != nullptr)
 		findPathHelper(root->m_pRight, vec, expectedSum, currentSum);
 
-
+	//回到父节点前弹出当前节点值
 	vec.pop_back();
 }
 
