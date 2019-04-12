@@ -5,9 +5,35 @@ void ConvertNode(BinaryTreeNode* pNode, BinaryTreeNode** pLastNodeInList);
 
 BinaryTreeNode* Convert(BinaryTreeNode* pRootOfTree)
 {
+	BinaryTreeNode *pLastNodeInList = nullptr;
+	ConvertNode(pRootOfTree, &pLastNodeInList);
 
+	BinaryTreeNode *pHead = pLastNodeInList;
+	while (pHead != nullptr && pHead->m_pLeft != nullptr)
+		pHead = pHead->m_pLeft;
+	return pHead;
 }
 
+
+void ConvertNode(BinaryTreeNode* pNode, BinaryTreeNode** pLastNodeInList)
+{
+	if (pNode == nullptr)
+		return;
+
+	BinaryTreeNode *pCurrent = pNode;
+
+	if (pCurrent->m_pLeft != nullptr)
+		ConvertNode(pCurrent->m_pLeft, pLastNodeInList);
+
+	pCurrent->m_pLeft = *pLastNodeInList;
+	if (*pLastNodeInList != nullptr)
+		(*pLastNodeInList)->m_pRight = pCurrent;
+
+	*pLastNodeInList = pCurrent;
+
+	if (pCurrent->m_pRight != nullptr)
+		ConvertNode(pCurrent->m_pRight, pLastNodeInList);
+}
 
 
 // ====================ฒโสิด๚ย๋====================
