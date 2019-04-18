@@ -56,7 +56,7 @@ void Deserialize(BinaryTreeNode **pRoot, istream &stream) {
 		Deserialize(&((*pRoot)->m_pLeft), stream);
 		Deserialize(&((*pRoot)->m_pRight), stream);
 	}
-	*pRoot = new BinaryTreeNode();
+	
 }
 
 // ==================== Test Code ====================
