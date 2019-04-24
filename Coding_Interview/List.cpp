@@ -19,7 +19,7 @@ https://github.com/zhedahht/CodingInterviewChinese2/blob/master/LICENSE.txt)
 ListNode* CreateListNode(int value)
 {
     ListNode* pNode = new ListNode();
-    pNode->m_nValue = value;
+    pNode->m_nValue = value;      
     pNode->m_pNext = nullptr;
 
     return pNode;
