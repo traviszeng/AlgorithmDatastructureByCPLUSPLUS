@@ -1,5 +1,6 @@
 #include<iostream>
 #include<thread>
+#include<vector>
 
 /*
 2.2 向线程函数传递参数
