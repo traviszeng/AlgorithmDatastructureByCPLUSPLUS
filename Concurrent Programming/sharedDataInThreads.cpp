@@ -268,3 +268,208 @@ void thread_b() // 9 failed other_mutex层级低
 	std::lock_guard<hierarchical_mutex> lk(other_mutex); // 10
 	other_stuff();
 }
+
+
+class some_big_object;
+void swap(some_big_object& lhs, some_big_object& rhs);
+class X
+{
+private:
+	some_big_object some_detail;
+	std::mutex m;
+public:
+	X(some_big_object const& sd) :some_detail(sd) {}
+	friend void swap(X& lhs, X& rhs)
+	{
+		if (&lhs == &rhs)
+			return;
+		//std::unique_lock 是可移动，但不可赋值的类型
+		std::unique_lock<std::mutex> lock_a(lhs.m, std::defer_lock); // 1
+		std::unique_lock<std::mutex> lock_b(rhs.m, std::defer_lock); // 1 std::def_lock 留下未上锁的互斥量
+			std::lock(lock_a, lock_b); // 2 互斥量在这里上锁
+		swap(lhs.some_detail, rhs.some_detail);
+	}
+};
+
+void prepare_data();
+void do_something();
+//不同域中互斥量所有权的传递
+std::unique_lock<std::mutex> get_lock()
+{
+	extern std::mutex some_mutex;
+	std::unique_lock<std::mutex> lk(some_mutex);
+	prepare_data();
+	return lk; // 1
+}
+void process_data()
+{
+	std::unique_lock<std::mutex> lk(get_lock()); // 2
+	do_something();
+}
+
+std::mutex the_mutex;
+//一个细粒度锁(a fine-grained lock)能够保护较小的数据量，一个粗粒度锁(a coarse - grained lock)能够保护较多的数据量
+//执行必要的操作时，尽可能将持有锁的时间缩减到最小
+void get_and_process_data()
+{
+	std::unique_lock<std::mutex> my_lock(the_mutex);
+	some_class data_to_process = get_next_data_chunk();
+	my_lock.unlock(); // 1 不要让锁住的互斥量越过process()函数的调用
+	result_type result = process(data_to_process);
+	my_lock.lock(); // 2 为了写入数据，对互斥量再次上锁
+	write_result(data_to_process, result);
+}
+
+
+//3.10比较操作符中一次锁住一个互斥量
+class Y
+{
+private:
+	int some_detail;
+	mutable std::mutex m;
+	int get_detail() const
+	{
+		std::lock_guard<std::mutex> lock_a(m); // 1
+		return some_detail;
+	}
+public:
+	Y(int sd) :some_detail(sd) {}
+	friend bool operator==(Y const& lhs, Y const& rhs)
+	{
+		if (&lhs == &rhs)
+			return true;
+		int const lhs_value = lhs.get_detail(); // 2
+		int const rhs_value = rhs.get_detail(); // 3 不确保两个值被读出来后是否还一致
+		return lhs_value == rhs_value; // 4
+	}
+};
+
+
+//3.11 使用一个互斥量的延迟初始化(线程安全)过程
+typedef Ojbect some_resource;
+std::shared_ptr<some_resource> resource_ptr;
+std::mutex resource_mutex;
+void foo()
+{
+	std::unique_lock<std::mutex> lk(resource_mutex); // 所有线程在此序列化
+	if (!resource_ptr)
+	{
+		resource_ptr.reset(new some_resource); // 只有初始化过程需要保护
+	}
+	lk.unlock();
+	resource_ptr->do_something();
+}
+
+//双重检查锁模式
+/**指针第一次读取数据不需要获取锁①，并且只有在指针为NULL时才需要获取锁。然后，当获
+取锁之后，指针会被再次检查一遍② (这就是双重检查的部分)，避免另一的线程在第一次检查
+后再做初始化，并且让当前线程获取锁。*/
+/**
+这里有潜在的条件竞争，因为外部的读取锁①没有与内部的
+写入锁进行同步③。因此就会产生条件竞争，这个条件竞争不仅覆盖指针本身，还会影响到其
+指向的对象；即使一个线程知道另一个线程完成对指针进行写入，它可能没有看到新创建的
+some_resource实例，然后调用do_something()④后，得到不正确的结果。这个例子是在一种
+典型的条件竞争——数据竞争
+
+*/
+void undefined_behaviour_with_double_checked_locking()
+{
+	if (!resource_ptr) // 1
+	{
+		std::lock_guard<std::mutex> lk(resource_mutex);
+		if (!resource_ptr) // 2
+		{
+			resource_ptr.reset(new some_resource); // 3
+		}
+	}
+	resource_ptr->do_something(); // 4
+}
+
+//3.11 使用std::call_once做以上的
+//每个线程只需要使用 std::call_once ，在 std::call_once 的结束时，就能安全的知道指针已经被其他的线程初始化了
+std::shared_ptr<some_resource> resource_ptr;
+std::once_flag resource_flag; // 1
+void init_resource()
+{
+	resource_ptr.reset(new some_resource);
+}
+void foo()
+{
+	std::call_once(resource_flag, init_resource); // 可以完整的进行一次初始化
+	resource_ptr->do_something();
+}
+
+//3.12使用 std::call_once 作为类成员的延迟初始化(线程安全)
+/**
+第一个调用send_data()①或receive_data()③的线程完成初始化过程。使用成
+员函数open_connection()去初始化数据，也需要将this指针传进去。和其在在标准库中的函数
+一样，其接受可调用对象，比如 std::thread 的构造函数和 std::bind() ，通过
+向 std::call_once() ②传递一个额外的参数来完成这个操作*/
+class connection_info {};
+class connection_handle {};
+class X
+{
+private:
+	connection_info connection_details;
+	connection_handle connection;
+	std::once_flag connection_init_flag;
+	void open_connection()
+	{
+		connection = connection_manager.open(connection_details);
+	}
+public:
+	X(connection_info const& connection_details_) :
+		connection_details(connection_details_)
+	{}
+	void send_data(data_packet const& data) // 1
+	{
+		std::call_once(connection_init_flag, &X::open_connection, this); // 2
+		connection.send_data(data);
+	}
+	data_packet receive_data() // 3
+	{
+		std::call_once(connection_init_flag, &X::open_connection, this); // 2
+		return connection.receive_data();
+	}
+};
+
+
+//使用 boost::shared_mutex 来做同步
+/**
+当任
+一线程拥有一个共享锁时，这个线程就会尝试获取一个独占锁，直到其他线程放弃他们的
+锁；同样的，当任一线程拥有一个独占锁是，其他线程就无法获得共享锁或独占锁，直到第
+一个线程放弃其拥有的锁
+*/
+//3.13 使用 boost::shared_mutex 对数据结构进行保护
+#include <map>
+#include <string>
+#include <mutex>
+#include <boost/thread/shared_mutex.hpp>
+class dns_entry;
+class dns_cache
+{
+	std::map<std::string, dns_entry> entries;
+	mutable boost::shared_mutex entry_mutex;
+public:
+	dns_entry find_entry(std::string const& domain) const
+	{
+		/**
+		find_entry()使用了 boost::shared_lock<> 实例来保护其共享和只读权限①；这
+就使得，多线程可以同时调用find_entry()
+*/
+		boost::shared_lock<boost::shared_mutex> lk(entry_mutex); // 1
+		std::map<std::string, dns_entry>::const_iterator const it =
+			entries.find(domain);
+		return (it == entries.end()) ? dns_entry() : it->second;
+	}
+	void update_or_add_entry(std::string const& domain,
+		dns_entry const& dns_details)
+	{	
+		/**使用 std::lock_guard<> 实例，当表格需要更新时②，为其提供独占访问权限；在
+update_or_add_entry()函数调用时，独占锁会阻止其他线程对数据结构进行修改，并且这些
+线程在这时，也不能调用find_entry()。*/
+		std::lock_guard<boost::shared_mutex> lk(entry_mutex); // 2
+		entries[domain] = dns_details;
+	}
+};
