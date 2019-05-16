@@ -71,7 +71,7 @@ public:
 			return *this;
 		}
 
-		if (this->_ptr) {
+		if (this->_ptr) { //减少左值操作数所指对象的引用计数
 			(*this->_count)--;
 			if (this->_count == 0) {
 				delete this->_ptr;
