@@ -2,7 +2,10 @@
 #ifndef THREADSAFE_LOOKUP_TABLE
 #define THREADSAFE_LOOKUP_TABLE
 
+#include<boost/thread/shared_mutex.hpp>
+#include<vector>
 #include<mutex>
+
 
 template<typename Key, typename Value, typename Hash = std::hash<Key> >
 class threadsafe_lookup_table
