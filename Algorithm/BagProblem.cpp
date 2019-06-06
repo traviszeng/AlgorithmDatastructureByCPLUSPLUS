@@ -39,6 +39,7 @@ using namespace std;
 /**
 	二维数组没有优化
 */
+const int INF = 0x80000000;
 
 int solution1_01bag(int N,int V,vector<int> v,vector<int> w) {
 	/*
@@ -112,7 +113,17 @@ int solution3_01bag(int N, int V, vector<int> v, vector<int> w) {
 注意：本题要求是背包恰好装满背包时，求出最大价值总和是多少。如果不能恰好装满背包，输出 NO
 
 */
-
+int solution_fullBag(int N, int V, vector<int> v, vector<int> w) {
+	int* dp =new int[V];
+	fill(dp, dp + V, INF);
+	dp[0] = 0;
+	for (int i = 1; i <= N; i++) {
+		for (int j = w[i]; j <= V; j++) {
+			dp[j] = max(dp[j], dp[j - w[i]] + v[i]);
+		}
+	}
+	return dp[V];
+}
 
 int main() {
 	int T;      // 用例数
