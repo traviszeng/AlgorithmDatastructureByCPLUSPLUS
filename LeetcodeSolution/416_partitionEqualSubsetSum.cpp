@@ -11,7 +11,7 @@ bool canPartition(vector<int>& nums) {
 		canForm[i][0] = true;
 	}
 	for (int i = 1; i < nums.size() + 1; i++) {
-		for (int j = nums[i]; j < sum / 2 + 1; j++) {
+		for (int j = nums[i-1]; j < sum / 2 + 1; j++) {
 
 			if (j < nums[i - 1]) {
 				canForm[i][j] = canForm[i - 1][j];
