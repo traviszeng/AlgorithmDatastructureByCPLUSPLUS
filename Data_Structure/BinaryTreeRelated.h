@@ -2,8 +2,10 @@
 #include<queue>
 #include<vector>
 #include<string>
+#include<stack>
 #include<memory>
 #include<sstream>
+#include<iostream>
 #include<list>
 using namespace std;
 /*与二叉树相关的算法内容*/
@@ -300,4 +302,125 @@ TreeNode* lowestCommonAncestorBST(TreeNode* root, TreeNode* p, TreeNode* q) {
 	else
 		return lowestCommonAncestorBST(root->right, p, q);
 
+}
+
+//中序遍历递归
+void inorderTraversalRecursively(TreeNode* root) {
+	if (root == nullptr)
+		return;
+	inorderTraversalRecursively(root->left);
+	std::cout << root->val;
+	inorderTraversalRecursively(root->right);
+}
+
+//中序遍历非递归
+void inorderTraversalIteratively(TreeNode* root) {
+	if (root == nullptr)
+		return;
+	stack<TreeNode *> s;
+	TreeNode* temp = root;
+	while (!s.empty() || temp) {
+		//一直遍历到左子树最下边，边遍历边保存根节点到栈中
+		while (temp) {
+			s.push(temp);
+			temp = temp->left;
+		}
+		//当temp为空时，说明已经到达左子树最下边，这时需要出栈了  
+		if (!s.empty()) {
+			temp = s.top();
+			s.pop();
+			cout << temp->val;
+			//进入右子树，开始新的一轮左子树遍历(这是递归的自我实现)  
+			temp = temp->right;
+		}
+	}
+}
+
+//前序遍历递归
+void preorderTraversalRecursively(TreeNode *root) {
+	if (root == nullptr)
+		return;
+	cout << root->val;
+	preorderTraversalRecursively(root->left);
+	preorderTraversalRecursively(root->right);
+}
+
+void preorderTraversalRecursively(TreeNode* root) {
+	if (root == nullptr)
+		return;
+	stack<TreeNode*> s;
+	TreeNode* temp = root;
+	while (!s.empty() || temp) {
+		while (temp) {
+			//边遍历边打印
+			cout << temp;
+			s.push(temp);
+			temp = temp->left;
+		}
+		if (!s.empty()) {
+			temp = s.top();
+			s.pop();
+			temp = temp->right;
+		}
+
+	}
+}
+
+//后序遍历递归
+void postorderTraversalRecursively(TreeNode *root) {
+	if (root == nullptr)
+		return;
+	postorderTraversalRecursively(root->left);
+	postorderTraversalRecursively(root->right);
+	cout << root->val;
+}
+
+
+//后序遍历  
+void PostOrderWithoutRecursion(TreeNode* root)
+{
+	if (root == NULL)
+		return;
+	stack<TreeNode*> s;
+	//pCur:当前访问节点，pLastVisit:上次访问节点  
+	TreeNode* pCur, *pLastVisit;
+	//pCur = root;  
+	pCur = root;
+	pLastVisit = NULL;
+	//先把pCur移动到左子树最下边  
+	while (pCur)
+	{
+		s.push(pCur);
+		pCur = pCur->left;
+	}
+	while (!s.empty())
+	{
+		//走到这里，pCur都是空，并已经遍历到左子树底端(看成扩充二叉树，则空，亦是某棵树的左孩子)  
+		pCur = s.top();
+		s.pop();
+		//一个根节点被访问的前提是：无右子树或右子树已被访问过  
+		if (pCur->right == NULL || pCur->right == pLastVisit)
+		{
+			cout  << pCur->val;
+			//修改最近被访问的节点  
+			pLastVisit = pCur;
+		}
+		/*这里的else语句可换成带条件的else if:
+		else if (pCur->left == pLastVisit)//若左子树刚被访问过，则需先进入右子树(根节点需再次入栈)
+		因为：上面的条件没通过就一定是下面的条件满足。仔细想想！
+		*/
+		else
+		{
+			//根节点再次入栈  
+			s.push(pCur);
+			//进入右子树，且可肯定右子树一定不为空  
+			pCur = pCur->right;
+			while (pCur)
+			{
+				s.push(pCur);
+				pCur = pCur->left;
+			}
+		}
+	}
+	cout << endl;
 }
