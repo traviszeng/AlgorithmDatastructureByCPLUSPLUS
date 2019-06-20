@@ -9,3 +9,4 @@ vector<int> countBits(int num) {
 	}
 	return res;
 } 
+
