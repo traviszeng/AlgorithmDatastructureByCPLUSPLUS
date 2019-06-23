@@ -46,6 +46,7 @@ string decodeAtIndex(string S, int K) {
 		else
 			size--;
 	}
+	return "";
 }
 
 int main() {
