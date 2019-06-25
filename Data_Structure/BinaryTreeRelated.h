@@ -407,7 +407,7 @@ void PostOrderWithoutRecursion(TreeNode* root)
 		}
 		/*这里的else语句可换成带条件的else if:
 		else if (pCur->left == pLastVisit)//若左子树刚被访问过，则需先进入右子树(根节点需再次入栈)
-		因为：上面的条件没通过就一定是下面的条件满足。仔细想想！
+		
 		*/
 		else
 		{

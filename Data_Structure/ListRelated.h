@@ -426,3 +426,41 @@ ListNode* BubbleSort(ListNode* head) {
 	}
 	return head;
 }
+
+
+//寻找两个链表的公共子链
+//分别从两链出发 到达链尾后再从另一链重新出发
+//最后如果有公共子链 则会在公共节点相会
+ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+	if (headA == nullptr || headB == nullptr)
+		return nullptr;
+	ListNode* tempA = headA;
+	ListNode* tempB = headB;
+	bool flagA = false;
+	bool flagB = false;
+
+	while (tempA != tempB) {
+		if (tempA == nullptr && !flagA) {
+			flagA = true;
+			tempA = headB;
+		}
+		else {
+			tempA = tempA->next;
+		}
+
+
+		if (tempB == nullptr && !flagB) {
+			flagB = true;
+			tempB = headA;
+		}
+		else {
+			tempB = tempB->next;
+		}
+	}
+
+
+
+	if (tempA == tempB && tempA != nullptr)
+		return tempA;
+	return nullptr;
+}
