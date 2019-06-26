@@ -17,21 +17,27 @@ ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
 	bool flagB = false;
 	
 	while (tempA != tempB) {
-		
-		
-		if (tempA != nullptr &&!flagA) {
-			tempA = tempA->next;
-		}
-		else if (tempA == nullptr && !flagA) {
+		if (tempA == nullptr && !flagA) {
 			flagA = true;
 			tempA = headB;
 		}
 		else {
-			
+			tempA = tempA->next;
 		}
 
 
-		if(tempB!=nullptr)
+		if (tempB == nullptr && !flagB) {
+			flagB = true;
+			tempB = headA;
+		}
+		else {
 			tempB = tempB->next;
+		}
 	}
+
+	
+
+	if (tempA == tempB &&tempA!=nullptr)
+		return tempA;
+	return nullptr;
 }
