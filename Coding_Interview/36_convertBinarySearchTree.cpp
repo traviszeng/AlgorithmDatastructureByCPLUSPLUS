@@ -1,12 +1,53 @@
 #include"BinaryTree.h"
 #include<iostream>
 using namespace std;
-void ConvertNode(BinaryTreeNode* pNode, BinaryTreeNode** pLastNodeInList);
 
-BinaryTreeNode* Convert(BinaryTreeNode* pRootOfTree)
+
+
+void ConvertNode(BinaryTreeNode* root, BinaryTreeNode** plast) {
+	if (root == nullptr) {
+		return;
+	}
+	BinaryTreeNode * pCurrent = root;
+	if (pCurrent->m_pLeft != nullptr) {
+		ConvertNode(pCurrent->m_pLeft, plast);
+	}
+
+	if (pCurrent->m_pRight != nullptr)
+		ConvertNode(pCurrent->m_pRight, plast);
+
+	
+	pCurrent->m_pLeft = *plast;
+	if (*plast != nullptr)
+		(*plast)->m_pRight = pCurrent;
+	*plast = pCurrent;
+
+}
+
+
+
+//将二叉树按照后序遍历转成双向链表
+BinaryTreeNode* Convert(BinaryTreeNode* root) {
+	if (root == nullptr) {
+		return nullptr;
+	}
+	BinaryTreeNode* lastNode = nullptr;
+	ConvertNode(root, &lastNode);
+
+	BinaryTreeNode *pCurrent = lastNode;
+	pCurrent->m_pRight = nullptr;
+	while (pCurrent!=nullptr&&pCurrent->m_pLeft != nullptr)
+		pCurrent = pCurrent->m_pLeft;
+
+	return pCurrent;
+
+}
+
+
+BinaryTreeNode* Convert1(BinaryTreeNode* pRootOfTree)
 {
 	BinaryTreeNode *pLastNodeInList = nullptr;
-	ConvertNode(pRootOfTree, &pLastNodeInList);
+	ConvertNode1(pRootOfTree, &pLastNodeInList);
 
 	BinaryTreeNode *pHead = pLastNodeInList;
 	while (pHead != nullptr && pHead->m_pLeft != nullptr)
@@ -14,8 +55,8 @@ BinaryTreeNode* Convert(BinaryTreeNode* pRootOfTree)
 	return pHead;
 }
 
-
-void ConvertNode(BinaryTreeNode* pNode, BinaryTreeNode** pLastNodeInList)
+//按照中序遍历的方式
+void ConvertNode1(BinaryTreeNode* pNode, BinaryTreeNode** pLastNodeInList)
 {
 	if (pNode == nullptr)
 		return;
@@ -23,7 +64,7 @@ void ConvertNode(BinaryTreeNode* pNode, BinaryTreeNode** pLastNodeInList)
 	BinaryTreeNode *pCurrent = pNode;
 
 	if (pCurrent->m_pLeft != nullptr)
-		ConvertNode(pCurrent->m_pLeft, pLastNodeInList);
+		ConvertNode1(pCurrent->m_pLeft, pLastNodeInList);
 
 	pCurrent->m_pLeft = *pLastNodeInList;
 	if (*pLastNodeInList != nullptr)
@@ -32,7 +73,7 @@ void ConvertNode(BinaryTreeNode* pNode, BinaryTreeNode** pLastNodeInList)
 	*pLastNodeInList = pCurrent;
 
 	if (pCurrent->m_pRight != nullptr)
-		ConvertNode(pCurrent->m_pRight, pLastNodeInList);
+		ConvertNode1(pCurrent->m_pRight, pLastNodeInList);
 }
 
 
@@ -76,7 +117,7 @@ void DestroyList(BinaryTreeNode* pHeadOfList)
 	}
 }
 
-void Test(char* testName, BinaryTreeNode* pRootOfTree)
+void Test(const char* testName, BinaryTreeNode* pRootOfTree)
 {
 	if (testName != nullptr)
 		printf("%s begins:\n", testName);

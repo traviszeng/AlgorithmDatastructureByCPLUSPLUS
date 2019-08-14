@@ -424,3 +424,96 @@ void PostOrderWithoutRecursion(TreeNode* root)
 	}
 	cout << endl;
 }
+
+
+//传入一个一维数组 返回其组成huffman树的根节点
+template<typename ElemType>
+struct BTreeNode* CreateHuffman(ElemType a[], int n)
+{
+	int i, j;
+	struct BTreeNode **b, *q;
+	b = malloc(n * sizeof(struct BTreeNode));
+	for (i = 0; i < n; i++)
+	{
+		b[i] = malloc(sizeof(struct BTreeNode));
+		b[i]->data = a[i];
+		b[i]->left = b[i]->right = NULL;
+	}
+	for (i = 1; i < n; i++)
+	{
+		int k1 = -1, k2;
+		for (j = 0; j < n; j++)
+		{
+			if (b[j] != NULL && k1 == -1)
+			{
+				k1 = j;
+				continue;
+			}
+			if (b[j] != NULL)
+			{
+				k2 = j;
+				break;
+			}
+		}
+		for (j = k2; j < n; j++)
+		{
+			if (b[j] != NULL)
+			{
+				if (b[j]->data < b[k1]->data)
+				{
+					k2 = k1;
+					k1 = j;
+				}
+				else if (b[j]->data < b[k2]->data)
+					k2 = j;
+			}
+		}
+		q = malloc(sizeof(struct BTreeNode));
+		q->data = b[k1]->data + b[k2]->data;
+		q->left = b[k1];
+		q->right = b[k2];
+		b[k1] = q;
+		b[k2] = NULL;
+	}
+	free(b);
+	return q;
+}
+
+void ConvertNode(TreeNode* root, TreeNode** plast) {
+	if (root == nullptr) {
+		return;
+	}
+	TreeNode * pCurrent = root;
+	if (pCurrent->left != nullptr) {
+		ConvertNode(pCurrent->left, plast);
+	}
+
+	if (pCurrent->right != nullptr)
+		ConvertNode(pCurrent->right, plast);
+
+
+	pCurrent->left = *plast;
+	if (*plast != nullptr)
+		(*plast)->right = pCurrent;
+	*plast = pCurrent;
+
+}
+
+
+
+//将二叉树按照后序遍历转成双向链表
+TreeNode* Convert(TreeNode* root) {
+	if (root == nullptr) {
+		return nullptr;
+	}
+	TreeNode* lastNode = nullptr;
+	ConvertNode(root, &lastNode);
+
+	TreeNode *pCurrent = lastNode;
+	pCurrent->right = nullptr;
+	while (pCurrent != nullptr&&pCurrent->left != nullptr)
+		pCurrent = pCurrent->left;
+
+	return pCurrent;
+
+}
